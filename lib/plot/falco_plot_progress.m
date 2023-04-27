@@ -159,6 +159,7 @@ if(mp.flagPlot)
 
             h_psf = subplot(2,2,1); % Save the handle of the subplot
             set(h_psf, 'OuterPosition', [0.05, 0.46, [1 1]*0.45])
+            % Plot full/compact model
             imagesc(mp.Fend.xisDL,mp.Fend.etasDL,log10(Im),[-10 -3]); 
             axis xy equal tight; colorbar(h_psf); colormap(h_psf,parula);
         %     xlabel('$\lambda_0$/D','FontSize',16,'Interpreter','LaTeX'); 
@@ -167,8 +168,21 @@ if(mp.flagPlot)
             %ylabel(ch_psf,'$log_{10}$(NI)','Fontsize',24,'Interpreter','LaTex');
             if mp.flagFiber
                 title(sprintf('Stellar PSF: NI (SMF) = %.2e',InormHist(Itr)),'Fontsize',fst);%,'Fontweight','Bold');
+                fiber_loc = drawcircle('Center', [mp.Fend.x_fiber, mp.Fend.y_fiber], 'Radius', 1, 'Color', 'r', 'InteractionsAllowed', 'none');
             else
                 title(sprintf('Stellar PSF: NI = %.2e',InormHist(Itr)),'Fontsize',fst);%,'Fontweight','Bold');
+            end
+            % Save PSFs before + after correction
+            if Itr == 1
+                sprintf('Saving stellar PSF in Itr %d', Itr)
+                saveas(gca, append(mp.path.ws, mp.runLabel, '_PSF_itr', num2str(Itr, '%d.png')))
+
+            elseif mp.flagFiber && Itr == 9
+                sprintf('Saving stellar PSF in Itr %d', Itr)
+                saveas(gca, append(mp.path.ws, mp.runLabel, '_PSF_itr', num2str(Itr, '%d.png')))
+            elseif Itr == 21
+                sprintf('Saving stellar PSF in Itr %d', Itr)
+                saveas(gca, append(mp.path.ws, mp.runLabel, '_PSF_itr', num2str(Itr, '%d.png')))
             end
 
             h_offaxis = subplot(2,2,3); % Save the handle of the subplot
@@ -181,6 +195,7 @@ if(mp.flagPlot)
             buffer = 4; %--lambda/D
             xi_range = buffer*[-1 1] + xi_max;
             eta_range = buffer*[-1 1] + eta_max;
+            % Plot off axis PSF 
             imagesc(mp.Fend.eval.xisDL,mp.Fend.eval.etasDL,ImSimOffaxis/(max(ImSimOffaxis(:))),[0 1]); 
             axis xy equal tight; colorbar; colormap(h_offaxis,'parula'); %colormap(h_offaxis,brewermap([],'Blues'));
         %     xlabel('$\lambda_0$/D','FontSize',16,'Interpreter','LaTeX'); 
