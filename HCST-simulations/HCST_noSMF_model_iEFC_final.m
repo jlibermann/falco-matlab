@@ -30,8 +30,8 @@ mp.source_y_offset_norm = 0;  % y location [lambda_c/D] in dark hole at which to
 %% Bandwidth and Wavelength Specs
 
 mp.lambda0 = 550e-9;    %--Central wavelength of the whole spectral bandpass [meters]
-mp.fracBW = 0.01;       %--fractional bandwidth of the whole bandpass (Delta lambda / lambda0)
-mp.Nsbp = 1;            %--Number of sub-bandpasses to divide the whole bandpass into for estimation and control
+% mp.fracBW = 0.01;       %--fractional bandwidth of the whole bandpass (Delta lambda / lambda0)
+% mp.Nsbp = 1;            %--Number of sub-bandpasses to divide the whole bandpass into for estimation and control
 mp.Nwpsbp = 1;          %--Number of wavelengths to used to approximate an image in each sub-bandpass
 
 %% Wavefront Estimation
@@ -112,8 +112,8 @@ mp.dm2.inf_sign = '+';
 %% Deformable Mirrors: Optical Layout Parameters
 
 %--DM1 parameters
-% mp.dm1.Nact = 32;               % # of actuators across DM array
-mp.dm1.Nact = 16; % Josh: changed # of actuators
+mp.dm1.Nact = 32;               % # of actuators across DM array
+% mp.dm1.Nact = 16; % Josh: changed # of actuators
 mp.dm1.VtoH = 1e-9*ones(mp.dm1.Nact);  % gains of all actuators [nm/V of free stroke]
 mp.dm1.xtilt = 0;               % for foreshortening. angle of rotation about x-axis [degrees]
 mp.dm1.ytilt = 0;               % for foreshortening. angle of rotation about y-axis [degrees]
@@ -121,13 +121,13 @@ mp.dm1.zrot = 0;                % clocking of DM surface [degrees]
 mp.dm1.xc = (mp.dm1.Nact/2 - 1/2);       % x-center location of DM surface [actuator widths]
 mp.dm1.yc = (mp.dm1.Nact/2 - 1/2);       % y-center location of DM surface [actuator widths]
 mp.dm1.edgeBuffer = 1;          % max radius (in actuator spacings) outside of beam on DM surface to compute influence functions for. [actuator widths]
-% mp.dm1.basisType = 'fourier';  % (UNCOMMENT FOR IEFC) basis set for control. 'actuator' or 'fourier' 
-mp.dm1.basisType = 'actuator';
+mp.dm1.basisType = 'fourier';  % (UNCOMMENT FOR IEFC) basis set for control. 'actuator' or 'fourier' 
+% mp.dm1.basisType = 'actuator';
 
 
 %--DM2 parameters
-% mp.dm2.Nact = 32;               % # of actuators across DM array
-mp.dm2.Nact = 16; % Josh: changed # of actuators
+mp.dm2.Nact = 32;               % # of actuators across DM array
+% mp.dm2.Nact = 16; % Josh: changed # of actuators
 mp.dm2.VtoH = 1e-9*ones(mp.dm1.Nact);  % gains of all actuators [nm/V of free stroke]
 mp.dm2.xtilt = 0;               % for foreshortening. angle of rotation about x-axis [degrees]
 mp.dm2.ytilt = 0;               % for foreshortening. angle of rotation about y-axis [degrees]
@@ -135,8 +135,8 @@ mp.dm2.zrot = 0;                % clocking of DM surface [degrees]
 mp.dm2.xc = (mp.dm2.Nact/2 - 1/2);       % x-center location of DM surface [actuator widths]
 mp.dm2.yc = (mp.dm2.Nact/2 - 1/2);       % y-center location of DM surface [actuator widths]
 mp.dm2.edgeBuffer = 1;          % max radius (in actuator spacings) outside of beam on DM surface to compute influence functions for. [actuator widths]
-% mp.dm2.basisType = 'fourier';  % basis set for control. 'actuator' or 'fourier'
-mp.dm1.basisType = 'actuator';
+mp.dm2.basisType = 'fourier';  % basis set for control. 'actuator' or 'fourier'
+% mp.dm1.basisType = 'actuator';
 
 %--Aperture stops at DMs
 mp.flagDM1stop = false; %--Whether to apply an iris or not
@@ -157,9 +157,9 @@ mp.layout = 'Fourier';  %--Which optical layout to use
 mp.coro = 'vortex';
 
 %--Final Focal Plane Properties
-mp.Fend.res = 3; %--Sampling [ pixels per lambda0/D]
-% mp.Fend.res = 6; %--Sampling [ pixels per lambda0/D] %Josh: Changed sampling
-mp.Fend.FOV = 15; %--half-width of the field of view in both dimensions [lambda0/D]
+% mp.Fend.res = 3; %--Sampling [ pixels per lambda0/D]
+mp.Fend.res = 6; %--Sampling [ pixels per lambda0/D] %Josh: Changed sampling
+mp.Fend.FOV = 20; %--half-width of the field of view in both dimensions [lambda0/D]
 % mp.Fend.FOV = 11; % Josh: Changed FOV
 mp.Fend.clockAngDeg = 0; % Clocking angle of DH region
 
@@ -184,12 +184,13 @@ mp.Fend.score.ang = 180;
 
 % mp.Fend.score.ang = 360;  % angular opening of dark hole scoring region [degrees]
 
-mp.Fend.sides = 'left'; %--Which side(s) for correction: 'both', 'left', 'right', 'top', 'bottom'
+mp.Fend.sides = 'right'; %--Which side(s) for correction: 'both', 'left', 'right', 'top', 'bottom'
 % mp.Fend.sides = 'bottom';  % Josh: Changed side for correction
 % mp.Fend.shape = 'circle';
 mp.Fend.shape = 'D';
 
-mp.Fend.xiOffset = +2; % (UNCOMMENT FOR Fiber-based iEFC)
+% Offset DH location
+% mp.Fend.xiOffset = +7; % (UNCOMMENT FOR Fiber-based iEFC)
 % mp.Fend.xiOffset = +3; % (UNCOMMENT FOR Fiber-based iEFC)
 % Josh: Added section below:
 mp.dm1.fourier_spacing = 1; % Center-to-center spacing between Fourier modes in the focal plane. [lambda/D]
@@ -198,11 +199,11 @@ mp.dm1.fourier_gridType = 'hex';  % Options: 'hex' or 'square'. 'hex' has a dens
 % xiMin = mp.Fend.corr.Rin-1;
 % xiMin = ; 
 
-clocking = mp.Fend.clockAngDeg - 180; % -90 for 'bottom' dark hole.
+clocking = mp.Fend.clockAngDeg; %- 180; % -90 for 'bottom' dark hole.
 % [mp.dm1.fourier_basis_xis , mp.dm1.fourier_basis_etas] = falco_choose_fourier_locations_polar(...
 %     mp.dm1.Nact/2, mp.dm1.fourier_spacing, mp.dm1.fourier_gridType, xiMin, mp.Fend.corr.Rout+1, mp.Fend.corr.ang, clocking, xiMin);
 [mp.dm1.fourier_basis_xis , mp.dm1.fourier_basis_etas] = falco_choose_fourier_locations_polar(...
-    mp.dm1.Nact/2, mp.dm1.fourier_spacing, mp.dm1.fourier_gridType, mp.Fend.corr.Rin-3, mp.Fend.corr.Rout, 360, clocking); % Remove knife edge from actuator pos.
+    mp.dm1.Nact/2, mp.dm1.fourier_spacing, mp.dm1.fourier_gridType, mp.Fend.corr.Rin-3, mp.Fend.corr.Rout, 180, clocking); % Remove knife edge from actuator pos.
 % TODO: Experiment w/ mp.Fend.corr.Rout to see how actuators outside of DH
 % region might affect NI
 % TODO: Try this w/ one actuator as well: mp.Fend.corr.Rout-0.5
@@ -333,6 +334,68 @@ mp.F3.compact.res = 4; % Coarse DFT resolution used in propcustom_mft_PtoFtoP.m
 mp.F3.full.res = 4; % Coarse DFT resolution used in propcustom_mft_PtoFtoP.m
 
 %% Aberrations
+%% Aberrations
+% indsZnoll = 7:8;
+% Nz = length(indsZnoll);
+% ZmapCubeCompact = falco_gen_norm_zernike_maps(mp.P1.compact.Nbeam, mp.centering, indsZnoll);
+% ZmapCubeFull = falco_gen_norm_zernike_maps(mp.P1.full.Nbeam, mp.centering, indsZnoll);
+% 
+% mp.P1.compact.E = exp(1j*10e-9/mp.lambda0*sum(ZmapCubeCompact, 3));
+% mp.P1.full.E = exp(1j*10e-9/mp.lambda0*sum(ZmapCubeFull, 3));
+
+%%%%%%%%%%% DON'T MODIFY %%%%%%%%%%%%%
+%%%TODO: Lock the seed
+indsZnoll = 4:100; % Generate aberrations spanning low-high spatial freqs
+zern_error_rms = 10e-9; 
+Nz = length(indsZnoll);
+
+% Zernike maps for compact model
+ZmapCubeCompact = falco_gen_norm_zernike_maps(mp.P1.compact.Nbeam, mp.centering, indsZnoll); % generate cube of zernike modes
+mp.P1.compact.Narr = length(mp.P1.compact.mask);
+
+%%%%%% Uncomment to randomize Zernike coefficients
+Nbeam_zern = size(ZmapCubeCompact, 1);
+ZmapCubeCompact = repmat(rand(1, 1, Nz) - 1/2, [Nbeam_zern   Nbeam_zern     1]) .*ZmapCubeCompact;
+%%%%%%%
+
+ZmapCompact = sum(ZmapCubeCompact, 3); % sum the zernike modes
+ZmapCompact = padOrCropEven(ZmapCompact, mp.P1.compact.Narr); % pad to get a phase map with same size as the compact pupil
+
+ZmapCompact_norm = ZmapCompact / std(ZmapCompact(mp.P1.compact.mask==1)); % normalize over the compact pupil mask
+
+% Zernike maps for full model
+ZmapCubeFull = falco_gen_norm_zernike_maps(mp.P1.full.Nbeam, mp.centering, indsZnoll);
+mp.P1.full.Narr = length(mp.P1.full.mask);
+
+%%%%%% Uncomment to randomize Zernike coefficients
+Nbeam_zern = size(ZmapCubeFull, 1);
+ZmapCubeFull = repmat(rand(1, 1, Nz) - 1/2, [Nbeam_zern   Nbeam_zern     1]) .*ZmapCubeFull;
+%%%%%
+
+ZmapFull = sum(ZmapCubeFull, 3); % sum the zernike modes
+ZmapFull = padOrCropEven(ZmapFull, mp.P1.full.Narr); % pad to get a phase map with same size as the full pupil
+ZmapFull_norm = ZmapFull / std(ZmapFull(mp.P1.full.mask==1)); % normalize over the full pupil mask
+
+
+
+%%%% Load realistic phase maps %%%%%%
+ZmapCompact_norm = load('ZmapCompact_norm_1.mat');
+ZmapFull_norm = load('ZmapFull_norm_1.mat');
+
+% % Debugging: Plot Z map on pupil
+imagesc(ZmapFull_norm.ZmapFull_norm.*mp.P1.full.mask)
+
+% % Aberrated E-fields
+mp.P1.compact.E = zeros(size(ZmapFull, 1), size(ZmapFull, 2),mp.Nsbp);
+mp.P1.full.E = zeros(size(ZmapCompact, 1), size(ZmapCompact, 2), mp.Nwpsbp, mp.Nsbp);
+for II = 1:mp.Nsbp
+    mp.P1.compact.E(:,:,II) = exp(1j * 2 * pi / mp.lambda0 * zern_error_rms * ZmapCompact_norm.ZmapCompact_norm);
+    for JJ = 1:mp.Nwpsbp
+        mp.P1.full.E(:,:,JJ, II) = exp(1j * 2 * pi / mp.lambda0 * zern_error_rms * ZmapFull_norm.ZmapFull_norm);
+    end
+end
+
+
 % % indsZnoll = 7:8;
 % % Nz = length(indsZnoll);
 % % ZmapCubeCompact = falco_gen_norm_zernike_maps(mp.P1.compact.Nbeam, mp.centering, indsZnoll);

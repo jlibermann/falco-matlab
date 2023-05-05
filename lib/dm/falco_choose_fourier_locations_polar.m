@@ -56,6 +56,9 @@ function [xiVec, etaVec] = falco_choose_fourier_locations_polar(freqMax, spacing
             ETAS = [];
             % row number (rowNum) is 1 for the center row and 2 is above it, etc.
             % Nacross is the total number of points across that row
+            
+            % This for loop builds a hexagonal grid of spatial frequencies
+            % in x and y
             for rowNum = 1:Nrings
 %                 Nacross = 2*Nrings - rowNum; % Number of actuators across at that row (for hex tiling in a hex shape)
                 Nacross = 2*Nrings - rowNum; % Number of actuators across at that row (for hex tiling in a hex shape)
@@ -82,9 +85,10 @@ function [xiVec, etaVec] = falco_choose_fourier_locations_polar(freqMax, spacing
     end
 
     % 2nd, remove all points not in the region of interest
-% %     [THETAS, RHOS] = cart2pol(XIS, ETAS); % (UNCOMMENT FOR NON-FIBER) Offset actuator pos. to overlap w/ DH
+    % Uncomment for iEFC (D-shape)
+    [THETAS, RHOS] = cart2pol(XIS-2, ETAS);
     
-    [THETAS, RHOS] = cart2pol(XIS-varargin{2}, ETAS); % Offset actuator pos. to overlap w/ DH
+%     [THETAS, RHOS] = cart2pol(XIS-varargin{2}, ETAS-varargin{3}); % Offset actuator pos. to overlap w/ DH
 %     [THETAS, RHOS] = cart2pol(XIS-6, ETAS); % Offset actuator pos. to overlap w/ DH
 
 

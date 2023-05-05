@@ -177,7 +177,7 @@ if(mp.flagPlot)
                 sprintf('Saving stellar PSF in Itr %d', Itr)
                 saveas(gca, append(mp.path.ws, mp.runLabel, '_PSF_itr', num2str(Itr, '%d.png')))
 
-            elseif mp.flagFiber && Itr == 9
+            elseif Itr == 9
                 sprintf('Saving stellar PSF in Itr %d', Itr)
                 saveas(gca, append(mp.path.ws, mp.runLabel, '_PSF_itr', num2str(Itr, '%d.png')))
             elseif Itr == 21
