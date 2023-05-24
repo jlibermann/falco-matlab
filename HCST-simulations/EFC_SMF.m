@@ -17,32 +17,39 @@ close all;
 % Add FALCO to the MATLAB path with the command:  addpath(genpath(full_path_to_falco)); savepath;
 
 addpath('/media/Data_Drive/KPIC/dev/jliberman/FALCO_Repo/')
-addpath('/media/Data_Drive/KPIC/dev/jliberman/FALCO_Repo/HCST-simulations/')
+% addpath('/media/Data_Drive/KPIC/dev/jliberman/FALCO_Repo/HCST-simulations/')
 
 setPathsJosh;
 
 
 %%--Output Data Directories (Comment these lines out to use defaults within falco-matlab/data/ directory.)
 % mp.path.config = ; %--Location of config files and minimal output files. Default is [mp.path.falco filesep 'data' filesep 'brief' filesep]
-mp.path.ws = '/media/Data_Drive/KPIC/dev/jliberman/FALCO_Repo/falco-matlab/data/efc_smf_NEW/'; % (Mostly) complete workspace from end of trial. Default is [mp.path.falco filesep 'data' filesep 'ws' filesep];
+mp.path.ws = '/media/Data_Drive/KPIC/dev/jliberman/FALCO_Repo/falco-matlab/data/efc_smf_34act/'; % (Mostly) complete workspace from end of trial. Default is [mp.path.falco filesep 'data' filesep 'ws' filesep];
 mp.flagSaveWS = true;  %--Whether to save out entire (large) workspace at the end of trial. Default is false
 
 % ws_new = load('Series0001_Trial0005__Itrs0020_vortex_LUVOIR_B_1DM32_z0.2_IWA2_OWA10_5lams650nm_BW10_gridsearchEFCDM1_all.mat');
 % Step 2: Load model parameters
 
+mp.fracBW = 0.2;
+mp.Nsbp = 9;
+
 % mp.fracBW = 0.1;
 % mp.Nsbp = 5;
-% 
-mp.fracBW = 0.01;
-mp.Nsbp = 1;
+
+% mp.fracBW = 0.01;
+% mp.Nsbp = 1;
 mp.Nwpsbp = 1;          %--Number of wavelengths to used to approximate an image in each sub-bandpass
 
-mp.Fend.x_fiber = [3];
-mp.Fend.y_fiber = [0];%[-3 0 4.625 -4.625];
+mp.Fend.x_fiber = [0];
+mp.Fend.y_fiber = [-8];%[-3 0 4.625 -4.625];
 mp.Fend.Nfiber = numel(mp.Fend.x_fiber);
 
 HCST_SMF_model_IEFC_NEW;
 % HCST_noSMF_model_iEFC_final;
+
+mp.dm1.basisType = 'actuator';
+mp.dm2.basisType = 'actuator';
+
 
 mp.estimator = 'perfect';
 
@@ -50,8 +57,11 @@ mp.estimator = 'perfect';
 mp.flagFiber = true;
 mp.flagLenslet = false;
 
-mp.thput_eval_x = 3;
-mp.source_x_offset_norm = 3;
+mp.thput_eval_x = mp.Fend.x_fiber;
+mp.thput_eval_y = mp.Fend.y_fiber;
+
+mp.source_x_offset_norm = mp.Fend.x_fiber;
+mp.source_y_offset_norm = mp.Fend.y_fiber;
 
 % mp.Fend.x_fiber = [1]; %[7];%[8 5 5.3405 -2.6702 -2.6702]; %Fiber core center positions in lambda_0/D
 % mp.Fend.y_fiber = [0];%[-3 0 4.625 -4.625];
@@ -75,7 +85,7 @@ mp.flagPlot = true;
 mp.SeriesNum = 3;
 mp.TrialNum = 1;
 
-mp.lambda0 = 550e-9;    %--Central wavelength of the whole spectral bandpass [meters]
+% mp.lambda0 = 750e-9;    %--Central wavelength of the whole spectral bandpass [meters]
 
 %--Use just 1 wavelength for initial debugging/testing of code
 % mp.fracBW = [0.01, 0.01, 0.05, 0.1, 0.15, 0.2];       %--fractional bandwidth of the whole bandpass (Delta lambda / lambda0)
@@ -111,8 +121,10 @@ mp.dm_ind = 1; % Specify which DM to use
 %     '_',mp.controller, 'DM', num2str(mp.dm_ind)];
 
 
-mp.runLabel = ['efc_smf_wfe_mono_16act_3lambda0D'];
+% mp.runLabel = ['efc_D_shape_smf_wfe_bb_7lambda0D'];
 
+mp.runLabel = ['efc_', mp.dm1.fourier_gridType, '_smf_10nmwfe_', 'BW',num2str(mp.fracBW*100), '_Xpos', num2str(mp.Fend.x_fiber),...
+    '_Ypos', num2str(mp.Fend.y_fiber), '_Xoff', num2str(mp.Fend.xiOffset), '_Yoff', num2str(mp.Fend.etaOffset),];
 %% Step 5: Perform the Wavefront Sensing and Control
 
 [mp, out] = falco_flesh_out_workspace(mp);

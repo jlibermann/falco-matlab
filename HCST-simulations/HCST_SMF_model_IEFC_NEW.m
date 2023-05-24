@@ -33,7 +33,7 @@ mp.thput_radius = 0.7; %--photometric aperture radius [lambda_c/D]. Used ONLY fo
 
 %% Bandwidth and Wavelength Specs
 
-mp.lambda0 = 550e-9;    %--Central wavelength of the whole spectral bandpass [meters]
+mp.lambda0 = 750e-9;    %--Central wavelength of the whole spectral bandpass [meters]
 % mp.fracBW = 0.01;       %--fractional bandwidth of the whole bandpass (Delta lambda / lambda0)
 % mp.Nsbp = 1;            %--Number of sub-bandpasses to divide the whole bandpass into for estimation and control
 mp.Nwpsbp = 1;          %--Number of wavelengths to used to approximate an image in each sub-bandpass
@@ -115,8 +115,8 @@ mp.dm2.inf_sign = '+';
 %% Deformable Mirrors: Optical Layout Parameters
 
 %--DM1 parameters
-% mp.dm1.Nact = 32;               % # of actuators across DM array
-mp.dm1.Nact = 16; % Josh: changed # of actuators
+mp.dm1.Nact = 34;               % # of actuators across DM array
+% mp.dm1.Nact = 16; % Josh: changed # of actuators
 mp.dm1.VtoH = 1e-9*ones(mp.dm1.Nact);  % gains of all actuators [nm/V of free stroke]
 mp.dm1.xtilt = 0;               % for foreshortening. angle of rotation about x-axis [degrees]
 mp.dm1.ytilt = 0;               % for foreshortening. angle of rotation about y-axis [degrees]
@@ -128,8 +128,8 @@ mp.dm1.basisType = 'fourier';  % (UNCOMMENT FOR IEFC) basis set for control. 'ac
 % mp.dm1.basisType = 'actuator';
 
 %--DM2 parameters
-% mp.dm2.Nact = 32;               % # of actuators across DM array
-mp.dm2.Nact = 16; % Josh: changed # of actuators
+mp.dm2.Nact = 34;               % # of actuators across DM array
+% mp.dm2.Nact = 16; % Josh: changed # of actuators
 mp.dm2.VtoH = 1e-9*ones(mp.dm1.Nact);  % gains of all actuators [nm/V of free stroke]
 mp.dm2.xtilt = 0;               % for foreshortening. angle of rotation about x-axis [degrees]
 mp.dm2.ytilt = 0;               % for foreshortening. angle of rotation about y-axis [degrees]
@@ -161,8 +161,8 @@ mp.coro = 'vortex';
 %--Final Focal Plane Properties
 % mp.Fend.res = 3; %--Sampling [ pixels per lambda0/D]
 mp.Fend.res = 6; %--Sampling [ pixels per lambda0/D] %Josh: Changed sampling
-mp.Fend.FOV = 15; %--half-width of the field of view in both dimensions [lambda0/D]
-% mp.Fend.FOV = 11; % Josh: Changed FOV
+% mp.Fend.FOV = 15; %--half-width of the field of view in both dimensions [lambda0/D]
+mp.Fend.FOV = 10; % Josh: Changed FOV
 mp.Fend.clockAngDeg = 0; % Clocking angle of DH region
 
 %--Correction and scoring region definition
@@ -191,6 +191,7 @@ mp.Fend.etaOffset = mp.Fend.y_fiber; % Offset DH such that it overlaps fiber pos
 % Josh: Added section below:
 mp.dm1.fourier_spacing = 1; % Center-to-center spacing between Fourier modes in the focal plane. [lambda/D]
 mp.dm1.fourier_gridType = 'hex';  % Options: 'hex' or 'square'. 'hex' has a denser packing
+% mp.dm1.fourier_gridType = 'square';
 % xiMin = mp.Fend.corr.Rin-1;
 % xiMin = ; 
 
@@ -198,14 +199,14 @@ clocking = mp.Fend.clockAngDeg; % -90 for 'bottom' dark hole.
 % [mp.dm1.fourier_basis_xis , mp.dm1.fourier_basis_etas] = falco_choose_fourier_locations_polar(...
 %     mp.dm1.Nact/2, mp.dm1.fourier_spacing, mp.dm1.fourier_gridType, xiMin, mp.Fend.corr.Rout+1, mp.Fend.corr.ang, clocking, xiMin);
 
-%%%% UNCOMMENT FOR BB SMF sims
-% [mp.dm1.fourier_basis_xis , mp.dm1.fourier_basis_etas] = falco_choose_fourier_locations_polar(...
-%     mp.dm1.Nact/2, mp.dm1.fourier_spacing, mp.dm1.fourier_gridType, mp.Fend.corr.Rin, mp.Fend.corr.Rout+1, mp.Fend.corr.ang, clocking, mp.Fend.x_fiber); % Remove knife edge from actuator pos.
-
-%%%%%%% UNCOMMENT FOR MONO SMF SIMS
+% %%%% UNCOMMENT FOR BB SMF sims
 [mp.dm1.fourier_basis_xis , mp.dm1.fourier_basis_etas] = falco_choose_fourier_locations_polar(...
-    mp.dm1.Nact/2, mp.dm1.fourier_spacing, mp.dm1.fourier_gridType, mp.Fend.corr.Rin, mp.Fend.corr.Rout-1, mp.Fend.corr.ang, clocking, [], mp.Fend.x_fiber); % Remove knife edge from actuator pos.
-% 
+    mp.dm1.Nact/2, mp.dm1.fourier_spacing, mp.dm1.fourier_gridType, mp.Fend.corr.Rin, mp.Fend.corr.Rout+1, mp.Fend.corr.ang, clocking, [], mp.Fend.xiOffset, mp.Fend.etaOffset); % Remove knife edge from actuator pos.
+
+% % %%%%%%% UNCOMMENT FOR MONO SMF SIMS
+% [mp.dm1.fourier_basis_xis , mp.dm1.fourier_basis_etas] = falco_choose_fourier_locations_polar(...
+%     mp.dm1.Nact/2, mp.dm1.fourier_spacing, mp.dm1.fourier_gridType, mp.Fend.corr.Rin, mp.Fend.corr.Rout, mp.Fend.corr.ang, clocking, [], mp.Fend.xiOffset, mp.Fend.etaOffset); % Remove knife edge from actuator pos.
+
 % [mp.dm1.fourier_basis_xis , mp.dm1.fourier_basis_etas] = falco_choose_fourier_locations_polar(...
 %     mp.dm1.Nact/2, mp.dm1.fourier_spacing, mp.dm1.fourier_gridType, mp.Fend.corr.Rin, mp.Fend.corr.Rout+3, mp.Fend.corr.ang, clocking, mp.Fend.x_fiber, mp.Fend.y_fiber);
 
