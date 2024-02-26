@@ -56,7 +56,11 @@ function [xiVec, etaVec] = falco_choose_fourier_locations_polar(freqMax, spacing
             ETAS = [];
             % row number (rowNum) is 1 for the center row and 2 is above it, etc.
             % Nacross is the total number of points across that row
+            
+            % This for loop builds a hexagonal grid of spatial frequencies
+            % in x and y
             for rowNum = 1:Nrings
+%                 Nacross = 2*Nrings - rowNum; % Number of actuators across at that row (for hex tiling in a hex shape)
                 Nacross = 2*Nrings - rowNum; % Number of actuators across at that row (for hex tiling in a hex shape)
                 xiOffset = Nrings - (rowNum+1)/2; % x offset from origin
 
@@ -81,7 +85,13 @@ function [xiVec, etaVec] = falco_choose_fourier_locations_polar(freqMax, spacing
     end
 
     % 2nd, remove all points not in the region of interest
-    [THETAS, RHOS] = cart2pol(XIS, ETAS);
+    % Uncomment for iEFC (D-shape)
+    [THETAS, RHOS] = cart2pol(XIS-2, ETAS);
+    
+%     [THETAS, RHOS] = cart2pol(XIS-varargin{2}, ETAS-varargin{3}); % Offset actuator pos. to overlap w/ DH
+%     [THETAS, RHOS] = cart2pol(XIS-6, ETAS); % Offset actuator pos. to overlap w/ DH
+
+
     THETAS_ROT = angle(exp(1j*(THETAS-deg2rad(clocking))));
     radialMask = (RHOS >= radiusInner) & (RHOS <= radiusOuter);
     angleMask = abs(THETAS_ROT) <= deg2rad(angleOpen)/2;
@@ -97,3 +107,85 @@ function [xiVec, etaVec] = falco_choose_fourier_locations_polar(freqMax, spacing
 
 
 end %--END OF FUNCTION
+
+% function [xiVec, etaVec] = falco_choose_fourier_locations_polar(freqMax, spacing, gridType, radiusInner, radiusOuter, angleOpen, clocking, varargin)
+% 
+%     %--Optional inputs
+%     if size(varargin, 2) == 2
+%         xiMin = varargin{1};
+%         yiMin = varargin{2};
+%         Check.real_nonnegative_scalar(xiMin);
+%         Check.real_nonnegative_scalar(yiMin);
+% 
+%     else
+%         xiMin = [];
+%         yiMin = [];
+%     end
+% 
+%     switch lower(gridType)
+% 
+%         case 'square'
+% 
+%             % 1st, Make grid of points within a giant square
+%             xisHalf = spacing/2:spacing:freqMax;
+%             xis = [-fliplr(xisHalf), xisHalf];
+%             [XIS, ETAS] = meshgrid(xis);
+% 
+% 
+%         case {'hex', 'hexagon', 'hexagonal'} % % TODO
+% 
+%             % 1st, Make vector of points within a giant hexagon
+%             Nrings = ceil(freqMax/(sqrt(3)/2)/spacing);
+%             XIS = [];
+%             ETAS = [];
+%             % row number (rowNum) is 1 for the center row and 2 is above it, etc.
+%             % Nacross is the total number of points across that row
+%             for rowNum = 1:Nrings
+% %                 Nacross = 2*Nrings - rowNum; % Number of actuators across at that row (for hex tiling in a hex shape)
+%                 Nacross = 2*Nrings - rowNum; % Number of actuators across at that row (for hex tiling in a hex shape)
+%                 xiOffset = Nrings - (rowNum+1)/2; % x offset from origin
+% 
+%                 xis = (0:Nacross-1).' - xiOffset; % xi values are 1 apart
+%                 etas = sqrt(3)/2*(rowNum-1)*ones(Nacross,1); % same y-value for the entire row
+% 
+%                 if rowNum == 1
+%                     XIS = [XIS; xis];
+%                     ETAS = [ETAS;etas];
+%                 else
+%                     XIS = [XIS; xis; xis];
+%                     ETAS = [ETAS; etas; -etas]; % rows +/-n have +/- y coordinates
+%                 end
+%             end
+%             % Rescale
+%             XIS = spacing * XIS;
+%             ETAS = spacing * ETAS;
+% 
+%         otherwise
+%             error("gridType must be 'square' or 'hex'.")
+% 
+%     end
+% 
+%     % 2nd, remove all points not in the region of interest
+% % %     [THETAS, RHOS] = cart2pol(XIS, ETAS); % (UNCOMMENT FOR NON-FIBER) Offset actuator pos. to overlap w/ DH
+%     
+% %     [THETAS, RHOS] = cart2pol(XIS-varargin{1}, ETAS-varargin{2}); % Offset actuator pos. to overlap w/ DH
+%     [THETAS, RHOS] = cart2pol(XIS-varargin{1}, ETAS); % Offset actuator pos. to overlap w/ DH
+% %     [THETAS, RHOS] = cart2pol(XIS-6, ETAS); % Offset actuator pos. to overlap w/ DH
+% 
+% 
+%     THETAS_ROT = angle(exp(1j*(THETAS-deg2rad(clocking))));
+%     radialMask = (RHOS >= radiusInner) & (RHOS <= radiusOuter);
+%     angleMask = abs(THETAS_ROT) <= deg2rad(angleOpen)/2;
+%     if ~isempty(xiMin) && ~isempty(yiMin)
+%         knifeEdgeMask = RHOS.*cos(THETAS_ROT) >= xiMin; % & RHOS.*cos(THETAS_ROT) >= yiMin;
+% %         knifeEdgeMask = RHOS.*cos(THETAS_ROT) >= xiMin;
+%     else
+%         knifeEdgeMask = logical(ones(size(radialMask)));
+%     end
+%     softwareMask = radialMask & angleMask & knifeEdgeMask;
+% 
+%     xiVec = XIS(softwareMask);
+%     etaVec = ETAS(softwareMask);
+% 
+% 
+% end %--END OF FUNCTION
