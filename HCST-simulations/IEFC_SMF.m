@@ -24,7 +24,7 @@ setPathsJosh;
 
 %%--Output Data Directories (Comment these lines out to use defaults within falco-matlab/data/ directory.)
 % mp.path.config = ; %--Location of config files and minimal output files. Default is [mp.path.falco filesep 'data' filesep 'brief' filesep]
-mp.path.ws = '/media/Data_Drive/KPIC/dev/jliberman/FALCO_Repo/falco-matlab/data/iefc_smf_34act/'; % (Mostly) complete workspace from end of trial. Default is [mp.path.falco filesep 'data' filesep 'ws' filesep];
+mp.path.ws = '/media/Data_Drive/KPIC/dev/jliberman/FALCO_Repo/falco-matlab/data/iefc_smf_34act/contrast_v_modes_final/'; % (Mostly) complete workspace from end of trial. Default is [mp.path.falco filesep 'data' filesep 'ws' filesep];
 mp.flagSaveWS = true;  %--Whether to save out entire (large) workspace at the end of trial. Default is false
 
 
@@ -34,20 +34,20 @@ mp.flagSaveWS = true;  %--Whether to save out entire (large) workspace at the en
 % % % % 
 % mp.fracBW = 0.01;
 % mp.Nsbp = 1;
-% 
+% % 
 
-% mp.fracBW = 0.1;
-% mp.Nsbp = 5;
-mp.fracBW = 0.2;
-mp.Nsbp = 9;
+mp.fracBW = 0.3;
+mp.Nsbp = 13;
+% mp.fracBW = 0.2;
+% mp.Nsbp = 9;
 mp.Nwpsbp = 1;          %--Number of wavelengths to used to approximate an image in each sub-bandpass
 
 mp.Fend.x_fiber = [0];
-mp.Fend.y_fiber = [6];%[-3 0 4.625 -4.625];
+mp.Fend.y_fiber = [-8];%[-3 0 4.625 -4.625];
 mp.Fend.Nfiber = numel(mp.Fend.x_fiber);
 
 HCST_SMF_model_IEFC_NEW;
-
+% HCST_SMF_model_IEFC_Dshape;
 % HCST_noSMF_model_iEFC_final;
 mp.estimator = 'iefc';
 mp.ctrl.flagUseModel = false; 
@@ -102,14 +102,16 @@ mp.TrialNum = 1;
 % mp.Nsbp = ones(1, 6)*5;            %--Number of sub-bandpasses to divide the whole bandpass into for estimation and control
 
 
-% mp.Nitr = 20; %--Number of wavefront control iterations
-mp.Nitr = 8; %--(Uncomment for fiber)
+mp.Nitr = 20; %--Number of wavefront control iterations
+% mp.Nitr = 8; %--(Uncomment for fiber)
+% mp.Nitr = 2; %--(Uncomment for fiber)
+
 
 % mp.est.probe.radius = 8;    % Max x/y extent of probed region [lambda/D].
 
 % mp.ctrl.log10regVec = -6:1:-1; %--log10 of the regularization exponents (often called Beta values)
 
-% mp.jac.fn = 'jac_iefc.mat'; %'jac_iefc_test.mat'; % Name of the Jacobian file to save or that is already saved. The path to this file is set by mp.path.jac.
+mp.jac.fn = 'jac_iefc_24modes_BW30.mat'; %'jac_iefc_test.mat'; % Name of the Jacobian file to save or that is already saved. The path to this file is set by mp.path.jac.
 
 % mp.relinItrVec = []; %[];%1; %[];  %--Correction iterations at which to re-compute the Jacobian. Make an empty vector to load mp.jac.fn
 
@@ -143,6 +145,11 @@ mp.iefc.probeDM = 1; %--Which DM to use when probing for IEFC.
 
 freqMax = max([max(mp.dm1.fourier_basis_xis), max(mp.dm1.fourier_basis_etas)]);
 
+set(groot,'defaulttextinterpreter','latex');
+set(groot,'defaultLegendInterpreter','latex');
+set(groot,'defaultAxesTickLabelInterpreter','latex');
+set(colorbar,'TickLabelInterpreter', 'latex','FontSize',20);
+
 figure(111);
 imagesc(mp.Fend.xisDL, mp.Fend.etasDL, mp.Fend.corr.maskBool); colormap gray;
 set(gca, 'Fontsize', 20);
@@ -150,6 +157,8 @@ set(gcf, 'Color', 'w');
 hold on;
 h111 = plot(mp.dm1.fourier_basis_xis , mp.dm1.fourier_basis_etas, 'or');
 set(h111, 'MarkerFaceColor', 'r', 'MarkerSize', 5);
+ylabel('$\lambda_0$/D','FontSize',20,'Interpreter','LaTeX');
+xlabel('$\lambda_0$/D','FontSize',20,'Interpreter','LaTeX');
 title('Overlay of Fourier Modes on the Dark Hole')
 axis xy equal tight;
 hold off;
@@ -166,18 +175,21 @@ drawnow;
 % mp.runLabel = ['iefc_', mp.dm1.fourier_gridType, '_smf_wfe_', 'nm_BW',num2str(mp.fracBW*100), '_Xpos', num2str(mp.Fend.x_fiber),...
 %     '_Ypos', num2str(mp.Fend.y_fiber), '_Xoff', num2str(mp.Fend.xiOffset), '_Yoff', num2str(mp.Fend.etaOffset), '_112modes'];
 
-mp.runLabel = ['iefc_', mp.dm1.fourier_gridType, '_smf_10nmwfe_', 'BW',num2str(mp.fracBW*100), '_Xpos', num2str(mp.Fend.x_fiber),...
-    '_Ypos', num2str(mp.Fend.y_fiber), '_Xoff', num2str(mp.Fend.xiOffset), '_Yoff', num2str(mp.Fend.etaOffset),];
+mp.runLabel = ['iefc_', mp.dm1.fourier_gridType, '_smf_', num2str(zern_error_rms*1e9), 'nmwfe_', 'BW',num2str(mp.fracBW*100), '_Xpos', num2str(mp.Fend.x_fiber),...
+    '_Ypos', num2str(mp.Fend.y_fiber), '_Xoff', num2str(mp.Fend.xiOffset), '_Yoff', num2str(mp.Fend.etaOffset), '_', num2str(mp.dm1.NbasisModes), 'modes', '_', num2str(mp.Nitr), 'iters'];
 
-% mp.runLabel = ['iefc_smf_wfe_mono_8lambda0D_newFOV'];
+% mp.runLabel = ['iefc_test'];
 
-saveas(h111, append(mp.path.ws, mp.runLabel, '_Fourier_overlay.png'))
+% print('-f111', append(mp.path.ws, mp.runLabel, '_Fourier_overlay.svg'), '-dsvg')
 %% Step 5: Perform the Wavefront Sensing and Control
 
+% f = @() falco_wfsc_loop(mp, out);
 
+mp.tstart = tic;
 [mp, out] = falco_wfsc_loop(mp, out);
+% mp.tEnd = toc(tstart);
 
-
+% t = timeit(f, 2);
 % %% Step 6: Plot result
 % itrs = linspace(1, 20, 20);
 % inormVals = out.Inormhist;

@@ -20,12 +20,12 @@ mp.centering = 'pixel';
 % - 'EE' for encircled energy within a radius (mp.thput_radius) divided by energy at telescope pupil
 mp.thput_metric = 'EE'; 
 mp.thput_radius = 0.7; %--photometric aperture radius [lambda_c/D]. Used ONLY for 'EE' method.
-mp.thput_eval_x = -4; % x location [lambda_c/D] in dark hole at which to evaluate throughput
-mp.thput_eval_y = 0; % y location [lambda_c/D] in dark hole at which to evaluate throughput
+% mp.thput_eval_x = -4; % x location [lambda_c/D] in dark hole at which to evaluate throughput
+% mp.thput_eval_y = 0; % y location [lambda_c/D] in dark hole at which to evaluate throughput
 
 %--Where to shift the source to compute the intensity normalization value.
-mp.source_x_offset_norm = -4;  % x location [lambda_c/D] in dark hole at which to compute intensity normalization
-mp.source_y_offset_norm = 0;  % y location [lambda_c/D] in dark hole at which to compute intensity normalization
+% mp.source_x_offset_norm = -4;  % x location [lambda_c/D] in dark hole at which to compute intensity normalization
+% mp.source_y_offset_norm = 0;  % y location [lambda_c/D] in dark hole at which to compute intensity normalization
 
 %% Bandwidth and Wavelength Specs
 
@@ -165,10 +165,10 @@ mp.Fend.clockAngDeg = 0; % Clocking angle of DH region
 
 %--Correction and scoring region definition
 % 
-% mp.Fend.corr.Rin = 2.0;   % inner radius of dark hole correction region [lambda0/D]
-% mp.Fend.corr.Rout  = 8;  % outer radius of dark hole correction region [lambda0/D]
 mp.Fend.corr.Rin = 3;   % inner radius of dark hole correction region [lambda0/D]
-mp.Fend.corr.Rout  = 10;  % outer radius of dark hole correction region [lambd
+mp.Fend.corr.Rout  = 10;  % outer radius of dark hole correction region [lambda0/D]
+% mp.Fend.corr.Rin = 3;   % inner radius of dark hole correction region [lambda0/D]
+% mp.Fend.corr.Rout  = 10;  % outer radius of dark hole correction region [lambd
 %  mp.Fend.corr.ang  = 180;
 % mp.Fend.corr.Rout  = 3;  % Josh: Changed outer radius of DH
 
@@ -190,20 +190,22 @@ mp.Fend.sides = 'right'; %--Which side(s) for correction: 'both', 'left', 'right
 mp.Fend.shape = 'D';
 
 % Offset DH location
-% mp.Fend.xiOffset = +7; % (UNCOMMENT FOR Fiber-based iEFC)
-% mp.Fend.xiOffset = +3; % (UNCOMMENT FOR Fiber-based iEFC)
+mp.Fend.xiOffset = -5; % (UNCOMMENT FOR Fiber-based iEFC)
+mp.Fend.etaOffset = -5;
+% mp.Fend.xiOffset = 0; % (UNCOMMENT FOR Fiber-based iEFC)
 % Josh: Added section below:
 mp.dm1.fourier_spacing = 1; % Center-to-center spacing between Fourier modes in the focal plane. [lambda/D]
 % mp.dm1.fourier_spacing = 0.5; % Center-to-center spacing between Fourier modes in the focal plane. [lambda/D]
-mp.dm1.fourier_gridType = 'hex';  % Options: 'hex' or 'square'. 'hex' has a denser packing
+% mp.dm1.fourier_gridType = 'hex';  % Options: 'hex' or 'square'. 'hex' has a denser packing
+mp.dm1.fourier_gridType = 'square';
 % xiMin = mp.Fend.corr.Rin-1;
 % xiMin = ; 
 
-clocking = mp.Fend.clockAngDeg; %- 180; % -90 for 'bottom' dark hole.
+clocking = mp.Fend.clockAngDeg %-180; %- 180; % -90 for 'bottom' dark hole.
 % [mp.dm1.fourier_basis_xis , mp.dm1.fourier_basis_etas] = falco_choose_fourier_locations_polar(...
 %     mp.dm1.Nact/2, mp.dm1.fourier_spacing, mp.dm1.fourier_gridType, xiMin, mp.Fend.corr.Rout+1, mp.Fend.corr.ang, clocking, xiMin);
 [mp.dm1.fourier_basis_xis , mp.dm1.fourier_basis_etas] = falco_choose_fourier_locations_polar(...
-    mp.dm1.Nact/2, mp.dm1.fourier_spacing, mp.dm1.fourier_gridType, mp.Fend.corr.Rin-3, mp.Fend.corr.Rout, 180, clocking); % Remove knife edge from actuator pos.
+    mp.dm1.Nact/2, mp.dm1.fourier_spacing, mp.dm1.fourier_gridType, mp.Fend.corr.Rin-3, mp.Fend.corr.Rout, 180, clocking, [], mp.Fend.xiOffset, mp.Fend.etaOffset); % Remove knife edge from actuator pos.
 % TODO: Experiment w/ mp.Fend.corr.Rout to see how actuators outside of DH
 % region might affect NI
 % TODO: Try this w/ one actuator as well: mp.Fend.corr.Rout-0.5

@@ -161,8 +161,8 @@ mp.coro = 'vortex';
 %--Final Focal Plane Properties
 % mp.Fend.res = 3; %--Sampling [ pixels per lambda0/D]
 mp.Fend.res = 6; %--Sampling [ pixels per lambda0/D] %Josh: Changed sampling
-% mp.Fend.FOV = 15; %--half-width of the field of view in both dimensions [lambda0/D]
-mp.Fend.FOV = 10; % Josh: Changed FOV
+mp.Fend.FOV = 15; %--half-width of the field of view in both dimensions [lambda0/D]
+% mp.Fend.FOV = 10; % Josh: Changed FOV
 mp.Fend.clockAngDeg = 0; % Clocking angle of DH region
 
 %--Correction and scoring region definition
@@ -199,9 +199,20 @@ clocking = mp.Fend.clockAngDeg; % -90 for 'bottom' dark hole.
 % [mp.dm1.fourier_basis_xis , mp.dm1.fourier_basis_etas] = falco_choose_fourier_locations_polar(...
 %     mp.dm1.Nact/2, mp.dm1.fourier_spacing, mp.dm1.fourier_gridType, xiMin, mp.Fend.corr.Rout+1, mp.Fend.corr.ang, clocking, xiMin);
 
-% %%%% UNCOMMENT FOR BB SMF sims
+% %%%% UNCOMMENT FOR BB SMF Fourier mode configurations
+
+% BB SMF 24 modes
 [mp.dm1.fourier_basis_xis , mp.dm1.fourier_basis_etas] = falco_choose_fourier_locations_polar(...
     mp.dm1.Nact/2, mp.dm1.fourier_spacing, mp.dm1.fourier_gridType, mp.Fend.corr.Rin, mp.Fend.corr.Rout+1, mp.Fend.corr.ang, clocking, [], mp.Fend.xiOffset, mp.Fend.etaOffset); % Remove knife edge from actuator pos.
+
+% BB SMF 112 modes
+% [mp.dm1.fourier_basis_xis , mp.dm1.fourier_basis_etas] = falco_choose_fourier_locations_polar(...
+%     mp.dm1.Nact/2, mp.dm1.fourier_spacing, mp.dm1.fourier_gridType, mp.Fend.corr.Rin, mp.Fend.corr.Rout+3, mp.Fend.corr.ang, clocking, [], mp.Fend.xiOffset, mp.Fend.etaOffset); % Remove knife edge from actuator pos.
+
+% BB SMF 64 modes
+% [mp.dm1.fourier_basis_xis , mp.dm1.fourier_basis_etas] = falco_choose_fourier_locations_polar(...
+%     mp.dm1.Nact/2, mp.dm1.fourier_spacing, mp.dm1.fourier_gridType, mp.Fend.corr.Rin, mp.Fend.corr.Rout+2, mp.Fend.corr.ang, clocking, [], mp.Fend.xiOffset, mp.Fend.etaOffset);
+
 
 % % %%%%%%% UNCOMMENT FOR MONO SMF SIMS
 % [mp.dm1.fourier_basis_xis , mp.dm1.fourier_basis_etas] = falco_choose_fourier_locations_polar(...
@@ -335,6 +346,7 @@ mp.F3.full.res = 4; % Coarse DFT resolution used in propcustom_mft_PtoFtoP.m
 %%%TODO: Lock the seed
 indsZnoll = 4:100; % Generate aberrations spanning low-high spatial freqs
 zern_error_rms = 10e-9; 
+% zern_error_rms = 0;
 Nz = length(indsZnoll);
 
 % Zernike maps for compact model
@@ -371,7 +383,17 @@ ZmapCompact_norm = load('ZmapCompact_norm_1.mat');
 ZmapFull_norm = load('ZmapFull_norm_1.mat');
 
 % % Debugging: Plot Z map on pupil
-imagesc(ZmapFull_norm.ZmapFull_norm.*mp.P1.full.mask)
+% imagesc(ZmapFull_norm.ZmapFull_norm.*mp.P1.full.mask)
+
+h_phasemap = subplot(1,1,1);
+imagesc(ZmapFull_norm.ZmapFull_norm.*mp.P1.full.mask); 
+axis xy equal tight; colorbar(h_phasemap, 'TickLabelInterpreter', 'latex'); colormap(h_phasemap,parula);
+xlabel('Pix','FontSize',16,'Interpreter','LaTeX'); 
+ylabel('Pix','FontSize',16,'Interpreter','LaTeX');
+set(gca,'FontSize',20,'FontName','Times','FontWeight','Normal')
+
+% print('/media/Data_Drive/KPIC/dev/jliberman/FALCO_Repo/falco-matlab/data/JATIS_figs/luvoir_phase_map', '-dsvg')
+exportgraphics(gcf,'/media/Data_Drive/KPIC/dev/jliberman/FALCO_Repo/falco-matlab/data/JATIS_figs/luvoir_phase_map.eps','BackgroundColor','none','ContentType','vector')
 
 % % Aberrated E-fields
 mp.P1.compact.E = zeros(size(ZmapFull, 1), size(ZmapFull, 2),mp.Nsbp);
