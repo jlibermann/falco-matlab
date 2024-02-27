@@ -86,9 +86,13 @@ function [xiVec, etaVec] = falco_choose_fourier_locations_polar(freqMax, spacing
 
     % 2nd, remove all points not in the region of interest
     % Uncomment for iEFC (D-shape)
-    [THETAS, RHOS] = cart2pol(XIS-2, ETAS);
+%     [THETAS, RHOS] = cart2pol(XIS, ETAS);
+%     [THETAS, RHOS] = cart2pol(XIS-2, ETAS);
+%     [THETAS, RHOS] = cart2pol(XIS-varargin{2}-2, ETAS-varargin{3});
+
+
     
-%     [THETAS, RHOS] = cart2pol(XIS-varargin{2}, ETAS-varargin{3}); % Offset actuator pos. to overlap w/ DH
+    [THETAS, RHOS] = cart2pol(XIS-varargin{2}, ETAS-varargin{3}); % Offset actuator pos. to overlap w/ DH
 %     [THETAS, RHOS] = cart2pol(XIS-6, ETAS); % Offset actuator pos. to overlap w/ DH
 
 
