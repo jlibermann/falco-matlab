@@ -39,6 +39,7 @@ for ni = 1:Nannuli
     if(isfield(mp.Fend,'xiFOV'));  maskStruct.xiFOV = mp.Fend.xiFOV;  end
     if(isfield(mp.Fend,'etaFOV'));  maskStruct.etaFOV = mp.Fend.etaFOV;  end
     if(isfield(mp.Fend,'xiOffset'));  maskStruct.xiOffset = mp.Fend.xiOffset;  end
+%     if(isfield(mp.Fend,'yiOffset'));  maskStruct.yiOffset = mp.Fend.yiOffset;  end
     if(isfield(mp.Fend,'etaOffset'));  maskStruct.etaOffset = mp.Fend.etaOffset;  end
     if(isfield(mp.Fend,'Nxi'));  maskStruct.Nxi = mp.Fend.Nxi;  end
     if(isfield(mp.Fend,'Neta'));  maskStruct.Neta = mp.Fend.Neta;  end
@@ -181,8 +182,9 @@ if(mp.full.flagPROPER)
 else %--Include the Zernike map at the input pupil for the FALCO full model
     ZernMap = falco_gen_norm_zernike_maps(mp.P1.full.Nbeam,mp.centering,indsZnoll(izern)); %--2-D map of the normalized (RMS = 1) Zernike mode
     ZernMap = padOrCropEven(ZernMap,mp.P1.full.Narr); %--Adjust zero padding if necessary
-    mp.P1.full.E(:,:,wi,si) = exp(1i*2*pi/mp.full.lambdasMat(si,wi)*mp.full.ZrmsVal*ZernMap).*mp.P1.full.E(:,:,wi,si); 
-    
+%     mp.P1.full.E(:,:,wi,si) = exp(1i*2*pi/mp.full.lambdasMat(si,wi)*mp.full.ZrmsVal*ZernMap).*mp.P1.full.E(:,:,wi,si); 
+    mp.P1.full.E = exp(1i*2*pi/mp.full.lambdasMat(si,wi)*mp.full.ZrmsVal*ZernMap).*mp.P1.full.E; % (02/28) Josh: Fixed indexing issue with E field
+
 end %--End of mp.full.flagPROPER if statement
 
 modvar.starIndex = 1;
