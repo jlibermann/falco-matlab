@@ -3,6 +3,9 @@
 [![Build Status](https://dev.azure.com/highcontrast/falco-matlab/_apis/build/status/ajeldorado.falco-matlab?branchName=master)](https://dev.azure.com/highcontrast/falco-matlab/_build/latest?definitionId=1&branchName=master)
 ![Azure DevOps tests (branch)](https://img.shields.io/azure-devops/tests/highcontrast/falco-matlab/1/master)
 ![Azure DevOps coverage (branch)](https://img.shields.io/azure-devops/coverage/highcontrast/falco-matlab/1/master)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.12640166.svg)](https://doi.org/10.5281/zenodo.12640166)
+
+
 
 *****NOTE: THIS LIBRARY HAS BEEN MODIFIED FROM THE ORIGINAL FALCO PACKAGE BY AJ RIGGS. THIS FORK CONTAINS THE SOURCE CODE USED IN "Implicit Electric Field Conjugation Through a Single-Mode Fiber, Liberman et al., 2024." Relevant scripts can be found in /HCST-simulations/*****
 
